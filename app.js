@@ -4,7 +4,7 @@ const port = 3000
 
 app.get('/', (req, res) => {
     console.log('Received request')
-    res.sendFile('/public/app/index.html')
+    res.sendFile(__dirname+'/public/app/index.html')
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}!`))
