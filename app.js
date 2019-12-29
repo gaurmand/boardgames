@@ -4,7 +4,7 @@ const PORT = 3000
 
 // middleware that logs request
 app.use((req, res, next) => {
-  console.log(`[LOG] ${new Date().toLocaleTimeString()}: Received ${req.method} request for ${req.hostname}/${req.originalUrl}: `)
+  console.log(`[LOG] ${new Date().toLocaleTimeString()}: Received ${req.method} request for ${req.originalUrl} (${req.protocol}://${req.hostname}) `)
   next()
 })
 
