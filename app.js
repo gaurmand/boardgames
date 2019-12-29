@@ -2,6 +2,12 @@ const express = require('express')
 const app = express()
 const PORT = 3000
 
+//connect to db
+const { Client } = require('pg')
+const client = new Client()
+client.connect()
+
+//set pug as templating engine
 app.set('views', './views')
 app.set('view engine', 'pug')
 
@@ -9,6 +15,15 @@ app.set('view engine', 'pug')
 app.use((req, res, next) => {
   console.log(`[LOG] ${new Date().toLocaleTimeString()}: Received ${req.method} request for ${req.originalUrl} (${req.protocol}://${req.hostname}) `)
   next()
+})
+
+//query test
+app.use((req, res, next) => {
+    client.query('SELECT NOW()', (err, res) => {
+      console.log(err, res)
+      client.end()
+    })  
+    next()
 })
 
 const boardgames = require('./boardgames')
