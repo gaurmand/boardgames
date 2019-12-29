@@ -12,11 +12,6 @@ app.use((req, res, next) => {
   next()
 })
 
-//query test
-app.use((req, res, next) => {
-
-})
-
 const boardgames = require('./boardgames')
 app.use('/boardgames', boardgames)
 
