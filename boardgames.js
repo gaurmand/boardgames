@@ -2,7 +2,7 @@ const express = require('express')
 const boardgames = express.Router()
 
 boardgames.get('/',(req, res) => {
-  res.sendFile(__dirname+'/public/app/index.html')
+  res.render('index', { title: "Leo's Board Game Corner", message: 'coming soon' })
 })
 
 boardgames.get('/new',(req, res) => {})
