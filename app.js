@@ -11,6 +11,6 @@ app.use((req, res, next) => {
 const boardgames = require('./boardgames')
 app.use('/boardgames', boardgames)
 
-app.get('/', (req, res) => res.send('Requewt for root')
+app.get('/', (req, res) => res.send('Requewt for root'))
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}!`))
