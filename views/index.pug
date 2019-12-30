@@ -2,4 +2,25 @@ html
   head
     title= title
   body
-    h1= message
+    h1=message
+    each game_stats in games_stats
+      h2= game_stats.game
+      table
+        thead
+          tr
+            th Player
+            th Elo
+            th Wins
+            th Losses
+            th Draws
+            th Win Percentage
+            th +/-
+        tbody
+          each player_stat in game_stats.stats
+            tr=game_stats.player
+            tr=game_stats.elo
+            tr=game_stats.num_wins
+            tr=game_stats.num_losses
+            tr=game_stats.num_draws
+            tr=game_stats.win_percentage
+            tr=game_stats.plusminus
