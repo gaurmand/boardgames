@@ -7,36 +7,27 @@ html
     script (src="/static/semantic.min.js")
   body
     .main.ui.container
-      .ui.vertical.segment
-        h1.ui.header=message
-      .ui.vertical.segment
-        .ui.segment.basic
-          .ui.left.rail.attached
-            .ui.vertical.menu
-              a.item New Match
-              a.item New Game
-              a.item New Player
-          .ui.segments
-            each game_stats in games_stats
-              .ui.segment
-                h2.ui.header= game_stats.game
-                table.ui.celled.striped.large.table
-                  thead
-                    tr
-                      th Player
-                      th Elo
-                      th Wins
-                      th Losses
-                      th Draws
-                      th Win Percentage
-                      th +/-
-                  tbody
-                    each player_stat in game_stats.stats
-                      tr
-                        td=player_stat.player
-                        td=player_stat.elo
-                        td=player_stat.num_wins
-                        td=player_stat.num_losses
-                        td=player_stat.num_draws
-                        td=player_stat.win_percentage
-                        td=player_stat.plusminus
+      h1.ui.dividing.header=message
+      each game_stats in games_stats
+        .ui.vertical.segment
+          h2.ui.header= game_stats.game
+          table.ui.celled.striped.large.table
+            thead
+              tr
+                th Player
+                th Elo
+                th Wins
+                th Losses
+                th Draws
+                th Win Percentage
+                th +/-
+            tbody
+              each player_stat in game_stats.stats
+                tr
+                  td=player_stat.player
+                  td=player_stat.elo
+                  td=player_stat.num_wins
+                  td=player_stat.num_losses
+                  td=player_stat.num_draws
+                  td=player_stat.win_percentage
+                  td=player_stat.plusminus
