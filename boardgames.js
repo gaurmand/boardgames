@@ -7,7 +7,7 @@ const client = new Client()
 client.connect()
 
 boardgames.get('/',(req, res, next) => {
-    client.query('SELECT * FROM player_stat;', (err, result) => {
+    client.query('SELECT * FROM player_stat ORDER BY game DESC elo DESC;', (err, result) => {
       client.end()
       if (err)
           next(err)
@@ -21,7 +21,7 @@ boardgames.get('/',(req, res, next) => {
             num_wins: row.num_wins,
             num_losses: row.num_losses,
             num_draws: row.num_draws,
-            win_percentage: parseInt((100*row.num_wins/(row.num_wins+row.num_losses+row.num_draws)).toFixed(2)),
+            win_percentage: getWinPercentage(row.num_wins, row.num_losses, row.num_draws),
             plusminus: row.num_wins - row.num_losses
           }
           
@@ -45,5 +45,10 @@ boardgames.get('/',(req, res, next) => {
 boardgames.get('/new',(req, res) => {res.send('New')})
 boardgames.get('/delete',(req, res) => {res.send('Delete')})
 boardgames.get('/update',(req, res) => {res.send('Update')})
+
+function getWinPercentage(wins, losses, draws){
+  let num_games = wins + losses + draws
+  return num_games ? (100*wins/num_games).toFixed(2)+'%' : "0%"
+}
 
 module.exports = boardgames
