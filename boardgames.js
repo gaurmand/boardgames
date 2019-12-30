@@ -13,7 +13,20 @@ boardgames.get('/',(req, res, next) => {
           next(err)
       else{
         console.log(result.rows)
-        res.render('index', { title: "Leo's Board Game Corner", message: 'coming soon' })
+        let game_stats = {}
+        result.rows.forEach(row => {
+          game_stats[row.game] = {
+            player: row.player,
+            elo: row.elo,
+            num_wins: row.num_wins,
+            num_losses: row.num_losses,
+            num_draws: row.num_draws,
+            win_percentage: parseInt((100*row.num_wins/(row.num_wins+row.num_losses+row.num_draws)).toFixed(2)),
+            plusminus: row.num_wins - row.num_losses
+          }
+        })
+        console.log(game_stats)
+        res.render('index', { title: "Leo's Board Game Corner", message: 'Game Stats', game_stats: game_stats})
       }
     })  
 })
