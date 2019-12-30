@@ -17,10 +17,10 @@ html
             th +/-
         tbody
           each player_stat in game_stats.stats
-            tr=game_stats.player
-            tr=game_stats.elo
-            tr=game_stats.num_wins
-            tr=game_stats.num_losses
-            tr=game_stats.num_draws
-            tr=game_stats.win_percentage
-            tr=game_stats.plusminus
+            tr=player_stat.player
+            tr=player_stat.elo
+            tr=player_stat.num_wins
+            tr=player_stat.num_losses
+            tr=player_stat.num_draws
+            tr=player_stat.win_percentage
+            tr=player_stat.plusminus
