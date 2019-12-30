@@ -42,11 +42,18 @@ boardgames.get('/',(req, res, next) => {
 })
 
 boardgames.get('/matches/new',(req, res) => {res.send('New match')})
-boardgames.get('/players/new',(req, res) => {res.send('New player')})
+
+boardgames.get('/players/new',(req, res) => {
+    res.render('new_player', { title: "New Player", message: "Create a new player record"})
+})
+boardgames.post('/players/new',(req, res) => {
+  console.log(req.body)
+  res.redirect('/')
+})
+
 boardgames.get('/games/new',(req, res) => {
   res.render('new_game', { title: "New Game", message: "Create a new game record"})
 })
-
 boardgames.post('/games/new',(req, res) => {
   console.log(req.body)
   res.redirect('/')
