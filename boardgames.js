@@ -37,7 +37,7 @@ boardgames.get('/',(req, res, next) => {
           }
         })
         console.log(games_stats)
-        res.render('index', { title: "Leo's Board Game Corner", message: "Welcom to Leo's Board Game Corner'", games_stats: games_stats})
+        res.render('index', { title: "Leo's Board Game Corner", message: "Welcome to Leo's Board Game Corner", games_stats: games_stats})
       }
     })  
 })
