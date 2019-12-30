@@ -7,10 +7,10 @@ html
     script (src="/static/semantic.min.js")
   body
     .main.ui.container
-      .vertical.segment
+      .ui.vertical.segment
         h1.ui.dividing.header=message
       each game_stats in games_stats
-        .vertical.segment
+        .ui.vertical.segment
           h2.ui.header= game_stats.game
           table.ui.celled.collapsing.striped.large.table
             thead
