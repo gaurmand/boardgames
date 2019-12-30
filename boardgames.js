@@ -7,7 +7,7 @@ const client = new Client()
 client.connect()
 
 boardgames.get('/',(req, res, next) => {
-    client.query('SELECT * FROM player_stat ORDER BY game DESC elo DESC;', (err, result) => {
+    client.query('SELECT * FROM player_stat ORDER BY game DESC, elo DESC;', (err, result) => {
       client.end()
       if (err)
           next(err)
