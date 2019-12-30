@@ -7,9 +7,10 @@ html
     script (src="/static/semantic.min.js")
   body
     .main.ui.container
-      h1=message
+      h1.ui.header=message
+      .ui.divider
       each game_stats in games_stats
-        h2= game_stats.game
+        h2.ui.header= game_stats.game
         table.ui.celled.collapsing.striped.large.table
           thead
             tr
