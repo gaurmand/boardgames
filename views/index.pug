@@ -12,7 +12,10 @@ html
       .ui.vertical.segment
         .ui.segment.basic
           .ui.left.rail.attached
-            .ui.segment New Match
+            .ui.vertical.menu
+              a.item New Match
+              a.item New Game
+              a.item New Player
           .ui.segments
             each game_stats in games_stats
               .ui.segment
