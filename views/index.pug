@@ -6,33 +6,34 @@ html
     script(src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous")
     script (src="/static/semantic.min.js")
   body
-      h1.ui.dividing.header=message
       .main.ui.container
-        .ui.dividing.left.rail
-          .ui.vertical.menu
-            a.item New Match
-            a.item New Player
-            a.item New Game
-        each game_stats in games_stats
-          .ui.vertical.segment
-            h2.ui.header= game_stats.game
-            table.ui.celled.striped.large.table
-              thead
-                tr
-                  th Player
-                  th Elo
-                  th Wins
-                  th Losses
-                  th Draws
-                  th Win Percentage
-                  th +/-
-              tbody
-                each player_stat in game_stats.stats
+        h1.ui.dividing.header=message
+        .ui.segment.basic (style="left:400px;width:600px;")
+          .ui.dividing.left.rail
+            .ui.vertical.menu
+              a.item New Match
+              a.item New Player
+              a.item New Game
+          each game_stats in games_stats
+            .ui.vertical.segment
+              h2.ui.header= game_stats.game
+              table.ui.celled.striped.large.table
+                thead
                   tr
-                    td=player_stat.player
-                    td=player_stat.elo
-                    td=player_stat.num_wins
-                    td=player_stat.num_losses
-                    td=player_stat.num_draws
-                    td=player_stat.win_percentage
-                    td=player_stat.plusminus
+                    th Player
+                    th Elo
+                    th Wins
+                    th Losses
+                    th Draws
+                    th Win Percentage
+                    th +/-
+                tbody
+                  each player_stat in game_stats.stats
+                    tr
+                      td=player_stat.player
+                      td=player_stat.elo
+                      td=player_stat.num_wins
+                      td=player_stat.num_losses
+                      td=player_stat.num_draws
+                      td=player_stat.win_percentage
+                      td=player_stat.plusminus
