@@ -44,6 +44,7 @@ boardgames.get('/',(req, res, next) => {
 boardgames.get('/matches/new',(req, res) => {res.send('New match')})
 boardgames.get('/players/new',(req, res) => {res.send('New player')})
 boardgames.get('/games/new',(req, res) => {
+  console.log(req.body)
   res.render('new_game', { title: "New Game", message: "Create a new game record"})
 })
 
