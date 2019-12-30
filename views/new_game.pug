@@ -1,0 +1,19 @@
+html
+  head
+    title= title
+    link(rel="stylesheet" type="text/css" href="/static/semantic.min.css")
+    link(rel="stylesheet" type="text/css" href="/static/test.css")
+    script(src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous")
+    script(src="/static/semantic.min.js")
+  body
+    .main.ui.container
+      .ui.vertical.segment
+        h1.ui.header=message
+      form.ui.form(action="/games/new" method="post"
+        .field
+          label Game name
+          input(type="text" name="name" required)
+        .field
+          label Description
+          input(type="text" name="desc")
+        button.ui.button(type="submit") Submit

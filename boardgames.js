@@ -43,7 +43,9 @@ boardgames.get('/',(req, res, next) => {
 
 boardgames.get('/matches/new',(req, res) => {res.send('New match')})
 boardgames.get('/players/new',(req, res) => {res.send('New player')})
-boardgames.get('/games/new',(req, res) => {res.send('New game')})
+boardgames.get('/games/new',(req, res) => {
+  res.render('new_game', { title: "New Game", message: "Create a new game record"})
+})
 
 function getWinPercentage(wins, losses, draws){
   let num_games = wins + losses + draws
