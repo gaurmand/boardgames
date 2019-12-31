@@ -56,7 +56,15 @@ boardgames.get('/games/new',(req, res) => {
 })
 boardgames.post('/games/new',(req, res) => {
   console.log(req.body)
-  res.redirect('/')
+
+  client.query('INSERT INTO game(name, description) VALUES($1, $2)', [req.body.name, req.body.desc], (err, result) => {
+    if (err){
+      console.error('Error on insert')
+      res.send('Error')
+      return
+    }
+    res.redirect('/')
+  }
 })
 
 function getWinPercentage(wins, losses, draws){
