@@ -205,6 +205,7 @@ async function insertGameRecord(res, game){
     res.send('Error on player_stat insert')    
   }
   
+  res.redirect('/')
 }
 
 function beginTransaction(next){
