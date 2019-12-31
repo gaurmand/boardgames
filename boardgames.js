@@ -67,7 +67,7 @@ boardgames.post('/players/new',(req, res) => {
             rollbackTransaction()
           } else if(result.rows.length <= 0){
             commitTransaction()
-            res.redirect('/players/new')
+            res.redirect('/')
           } else{
             let games = result.rows;
             
@@ -90,7 +90,7 @@ boardgames.post('/players/new',(req, res) => {
                 rollbackTransaction()
               } else{
                 commitTransaction()
-                res.redirect('/players/new')
+                res.redirect('/')
               }
             })
           }
@@ -125,7 +125,7 @@ boardgames.post('/games/new',(req, res) => {
             rollbackTransaction()
           } else if(result.rows.length <= 0){
             commitTransaction()
-            res.redirect('/games/new')
+            res.redirect('/')
           } else{
             let players = result.rows;
             
@@ -148,7 +148,7 @@ boardgames.post('/games/new',(req, res) => {
                 rollbackTransaction()
               } else{
                 commitTransaction()
-                res.redirect('/games/new')
+                res.redirect('/')
               }
             })
           }
