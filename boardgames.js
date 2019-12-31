@@ -48,7 +48,9 @@ boardgames.get('/players/new',(req, res) => {
 })
 boardgames.post('/players/new',(req, res) => {
   console.log(req.body)
-  res.redirect('/')
+  insertRecord('INSERT INTO player(name) VALUES($1)', [req.body.name], () => {
+    res.redirect('/')
+  })
 })
 
 boardgames.get('/games/new',(req, res) => {
@@ -56,20 +58,26 @@ boardgames.get('/games/new',(req, res) => {
 })
 boardgames.post('/games/new',(req, res) => {
   console.log(req.body)
-
-  client.query('INSERT INTO game(name, description) VALUES($1, $2)', [req.body.name, req.body.desc], (err, result) => {
-    if (err){
-      console.error('Error on insert')
-      res.send('Error')
-      return
-    }
+  insertRecord('INSERT INTO game(name, description) VALUES($1, $2)', [req.body.name, req.body.desc], () => {
     res.redirect('/')
   })
+
 })
 
 function getWinPercentage(wins, losses, draws){
   let num_games = wins + losses + draws
   return num_games ? (100*wins/num_games).toFixed(2)+'%' : "0%"
+}
+
+function insertRecord(queryText, params, cb){
+    client.query(queryText, params, (err, result) => {
+    if (err){
+      console.error(err)
+      res.send('Error on insert')
+      return
+    }
+    cb()
+  })
 }
 
 module.exports = boardgames
