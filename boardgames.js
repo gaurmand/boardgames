@@ -184,8 +184,10 @@ async function insertGameRecord(res, game){
     res.send('Error on player select')    
   }
   
-  if (players.length <= 0 ) //no need to update player_stat records
+  if (players.length <= 0 ){ //no need to update player_stat records
     res.redirect('/')
+    return
+  }
 
   //insert player_stat records
   try{
@@ -231,14 +233,16 @@ async function insertPlayerRecord(res, player){
     res.send('Error on game select')    
   }
   
-  if (games.length <= 0 ) //no need to update player_stat records
+  if (games.length <= 0 ){ //no need to update player_stat records
     res.redirect('/')
+    return
+  }
     
   //insert player_stat records
   try{
     //construct query text
     let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
-    games.forEach((game, i) => {query_text+=`($${i+2},$1,0,0,0,0)` + (i==games.length-1 ? ';':',')})
+    games.forEach((game, i) => {query_text+=`($${i+2},$1,0,0,0,1000)` + (i==games.length-1 ? ';':',')})
     console.log('query text: '+query_text)
     
     //construct values array
