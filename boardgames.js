@@ -48,56 +48,55 @@ boardgames.get('/players/new',(req, res) => {
 })
 boardgames.post('/players/new',(req, res) => {
   console.log(req.body)
-  let name = req.body.name
-
-  beginTransaction(() => {
-    client.query('INSERT INTO player(name) VALUES($1) RETURNING player_id', [name], (err, result) => {
-      if (err){
-        console.error(err)
-        res.send('Error on player insert')
-        rollbackTransaction()
-      } else{
-        //get just inserted player_id
-        let player_id = result.rows[0].player_id
+  insertPlayerRecord(res, {name: req.body.name})
+  // beginTransaction(() => {
+    // client.query('INSERT INTO player(name) VALUES($1) RETURNING player_id', [name], (err, result) => {
+      // if (err){
+        // console.error(err)
+        // res.send('Error on player insert')
+        // rollbackTransaction()
+      // } else{
+        // //get just inserted player_id
+        // let player_id = result.rows[0].player_id
         
-        client.query('SELECT * FROM game;', (err, result) => {
-          if (err){
-            console.error(err)
-            res.send('Error on game select')
-            rollbackTransaction()
-          } else if(result.rows.length <= 0){
-            commitTransaction()
-            res.redirect('/')
-          } else{
-            let games = result.rows;
+        // client.query('SELECT * FROM game;', (err, result) => {
+          // if (err){
+            // console.error(err)
+            // res.send('Error on game select')
+            // rollbackTransaction()
+          // } else if(result.rows.length <= 0){
+            // commitTransaction()
+            // res.redirect('/')
+          // } else{
+            // let games = result.rows;
             
-            //construct query text
-            let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
-            games.forEach((game, i) => {query_text+=`($${i+2},$1,0,0,0,0)` + (i==games.length-1 ? ';':',')})
+            // //construct query text
+            // let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
+            // games.forEach((game, i) => {query_text+=`($${i+2},$1,0,0,0,0)` + (i==games.length-1 ? ';':',')})
             
-            console.log('query text: '+query_text)
-            console.log('game_id: '+player_id)
+            // console.log('query text: '+query_text)
+            // console.log('game_id: '+player_id)
             
-            //construct values array
-            let values = [player_id]
-            games.forEach(game => values.push(game.game_id))
-            console.log('values: ', values)
+            // //construct values array
+            // let values = [player_id]
+            // games.forEach(game => values.push(game.game_id))
+            // console.log('values: ', values)
             
-            client.query(query_text, values, (err, result) => {
-              if (err){
-                console.error(err)
-                res.send('Error on player_stat insert')
-                rollbackTransaction()
-              } else{
-                commitTransaction()
-                res.redirect('/')
-              }
-            })
-          }
-        })
-      }
-    })
-  })
+            // client.query(query_text, values, (err, result) => {
+              // if (err){
+                // console.error(err)
+                // res.send('Error on player_stat insert')
+                // rollbackTransaction()
+              // } else{
+                // commitTransaction()
+                // res.redirect('/')
+              // }
+            // })
+          // }
+        // })
+      // }
+    // })
+  // })
 })
 
 boardgames.get('/games/new',(req, res) => {
@@ -200,6 +199,53 @@ async function insertGameRecord(res, game){
     players.forEach(player => values.push(player.player_id))
     console.log('values: ', values)
     
+    await client.query(query_text,values)
+  } catch(err){
+    console.error(err)
+    res.send('Error on player_stat insert')    
+  }
+  
+  res.redirect('/')
+}
+
+async function insertPlayerRecord(res, player){
+  let result, player_id, games;
+  
+  //insert player record
+  try{
+    result = await client.query('INSERT INTO player(name) VALUES($1) RETURNING player_id', [player.name])
+    player_id = result.rows[0].player_id
+    console.log('player_id: ' + player_id)
+  } catch(err){
+    console.error(err)
+    res.send('Error on player insert')    
+  }
+  
+  //get all game records
+  try{
+    result = await client.query('SELECT * FROM game;')
+    games = result.rows
+    console.log(games)
+  } catch(err){
+    console.error(err)
+    res.send('Error on game select')    
+  }
+  
+  if (games.length <= 0 ) //no need to update player_stat records
+    res.redirect('/')
+    
+  //insert player_stat records
+  try{
+    //construct query text
+    let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
+    games.forEach((game, i) => {query_text+=`($${i+2},$1,0,0,0,0)` + (i==games.length-1 ? ';':',')})
+    console.log('query text: '+query_text)
+    
+    //construct values array
+    let values = [player_id]
+    games.forEach(game => values.push(game.game_id))
+    console.log('values: ', values)
+
     await client.query(query_text,values)
   } catch(err){
     console.error(err)
