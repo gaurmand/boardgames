@@ -81,7 +81,7 @@ boardgames.post('/games/new',(req, res) => {
             console.log('game_id: '+result)
             let values = []
           }
-        }
+        })
       }
     }
   })
