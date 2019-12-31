@@ -105,7 +105,7 @@ boardgames.get('/games/new',(req, res) => {
 })
 boardgames.post('/games/new',(req, res) => {
   console.log(req.body)
-  insertGameRecord({name: req.body.name, desc: req.body.desc})
+  insertGameRecord(res, {name: req.body.name, desc: req.body.desc})
   // beginTransaction(() => {
     // client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [name, desc], (err, result) => {
       // if (err){
@@ -162,10 +162,11 @@ function getWinPercentage(wins, losses, draws){
   return num_games ? (100*wins/num_games).toFixed(2)+'%' : "0%"
 }
 
-async function insertGameRecord(game){
+async function insertGameRecord(res, game){
   try{
     let result = await client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [game.name, game.desc])
     console.log(result.rows[0])
+    res.redirect('/')
   } catch(err){
     console.error(err)  
   }
