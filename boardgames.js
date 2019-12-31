@@ -64,7 +64,7 @@ boardgames.post('/games/new',(req, res) => {
       return
     }
     res.redirect('/')
-  }
+  })
 })
 
 function getWinPercentage(wins, losses, draws){
