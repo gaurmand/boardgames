@@ -64,25 +64,36 @@ boardgames.post('/games/new',(req, res) => {
     client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [name, desc], (err, result) => {
       if (err){
         console.error(err)
-        res.send('Error on insert')
+        res.send('Error on game insert')
         rollbackTransaction()
       } else{
         let game_id = result.rows[0].game_id
         client.query('SELECT * FROM player;', (err, result) => {
           if (err){
             console.error(err)
-            res.send('Error on select')
+            res.send('Error on player select')
             rollbackTransaction()
           } else{
             let players = result.rows;
             let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
-            players.forEach((player, i) => {query_text+=`($${2*i+1},$${2*i+2},0,0,0,0)` + (i==players.length-1 ? ';':',')})
+            players.forEach((player, i) => {query_text+=`($1,$${i+2},0,0,0,0)` + (i==players.length-1 ? ';':',')})
             
             console.log('query text: '+query_text)
-            console.log('game_id: '+result)
-            let values = []
-            players.forEach(player => values.push(game_id, player.player_id))
+            console.log('game_id: '+game_id)
+            let values = [game_id]
+            players.forEach(player => values.push(player.player_id))
             console.log('values: ', values)
+            
+            client.query(query_text, values, (err, result) => {
+              if (err){
+                console.error(err)
+                res.send('Error on player_stat insert')
+                rollbackTransaction()
+              } else{
+                commitTransaction()
+                res.redirect('/games/new')
+              }
+            })
           }
         })
       }
@@ -104,10 +115,6 @@ function insertRecord(res, queryText, values){
     } else
       res.redirect('/')
   })
-}
-
-function performQuery(query_text, values, error, success){
-
 }
 
 function beginTransaction(next){
