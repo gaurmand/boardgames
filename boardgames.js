@@ -105,57 +105,55 @@ boardgames.get('/games/new',(req, res) => {
 })
 boardgames.post('/games/new',(req, res) => {
   console.log(req.body)
-  let name = req.body.name
-  let desc = req.body.desc
-
-  beginTransaction(() => {
-    client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [name, desc], (err, result) => {
-      if (err){
-        console.error(err)
-        res.send('Error on game insert')
-        rollbackTransaction()
-      } else{
-        //get just inserted game_id
-        let game_id = result.rows[0].game_id
+  insertGameRecord({name: req.body.name, desc: req.body.desc})
+  // beginTransaction(() => {
+    // client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [name, desc], (err, result) => {
+      // if (err){
+        // console.error(err)
+        // res.send('Error on game insert')
+        // rollbackTransaction()
+      // } else{
+        // //get just inserted game_id
+        // let game_id = result.rows[0].game_id
         
-        client.query('SELECT * FROM player;', (err, result) => {
-          if (err){
-            console.error(err)
-            res.send('Error on player select')
-            rollbackTransaction()
-          } else if(result.rows.length <= 0){
-            commitTransaction()
-            res.redirect('/')
-          } else{
-            let players = result.rows;
+        // client.query('SELECT * FROM player;', (err, result) => {
+          // if (err){
+            // console.error(err)
+            // res.send('Error on player select')
+            // rollbackTransaction()
+          // } else if(result.rows.length <= 0){
+            // commitTransaction()
+            // res.redirect('/')
+          // } else{
+            // let players = result.rows;
             
-            //construct query text
-            let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
-            players.forEach((player, i) => {query_text+=`($1,$${i+2},0,0,0,0)` + (i==players.length-1 ? ';':',')})
+            // //construct query text
+            // let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
+            // players.forEach((player, i) => {query_text+=`($1,$${i+2},0,0,0,0)` + (i==players.length-1 ? ';':',')})
             
-            console.log('query text: '+query_text)
-            console.log('game_id: '+game_id)
+            // console.log('query text: '+query_text)
+            // console.log('game_id: '+game_id)
             
-            //construct values array
-            let values = [game_id]
-            players.forEach(player => values.push(player.player_id))
-            console.log('values: ', values)
+            // //construct values array
+            // let values = [game_id]
+            // players.forEach(player => values.push(player.player_id))
+            // console.log('values: ', values)
             
-            client.query(query_text, values, (err, result) => {
-              if (err){
-                console.error(err)
-                res.send('Error on player_stat insert')
-                rollbackTransaction()
-              } else{
-                commitTransaction()
-                res.redirect('/')
-              }
-            })
-          }
-        })
-      }
-    })
-  })
+            // client.query(query_text, values, (err, result) => {
+              // if (err){
+                // console.error(err)
+                // res.send('Error on player_stat insert')
+                // rollbackTransaction()
+              // } else{
+                // commitTransaction()
+                // res.redirect('/')
+              // }
+            // })
+          // }
+        // })
+      // }
+    // })
+  // })
 
 })
 
@@ -164,14 +162,14 @@ function getWinPercentage(wins, losses, draws){
   return num_games ? (100*wins/num_games).toFixed(2)+'%' : "0%"
 }
 
-function insertRecord(res, queryText, values){
-  client.query(queryText, values, (err, result) => {
-    if (err){
-      console.error(err)
-      res.send('Error on insert')
-    } else
-      res.redirect('/')
-  })
+async function insertGameRecord(game){
+  try{
+    let result = await client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [game.name, game.desc])
+    console.log(result.rows[0])
+  } catch(err){
+    console.error(err)  
+  }
+  
 }
 
 function beginTransaction(next){
