@@ -67,6 +67,7 @@ boardgames.post('/games/new',(req, res) => {
         res.send('Error on insert')
         rollbackTransaction()
       } else{
+        let game_id = result.rows[0].game_id
         client.query('SELECT * FROM player;', (err, result) => {
           if (err){
             console.error(err)
@@ -80,6 +81,8 @@ boardgames.post('/games/new',(req, res) => {
             console.log('query text: '+query_text)
             console.log('game_id: '+result)
             let values = []
+            players.forEach(player => values.push(game_id, player.player_id))
+            console.log('values: ', values)
           }
         })
       }
