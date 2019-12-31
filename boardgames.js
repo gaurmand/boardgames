@@ -7,7 +7,7 @@ const client = new Client()
 client.connect()
 
 boardgames.get('/',(req, res, next) => {
-    client.query('SELECT * FROM player_stat ORDER BY game DESC, elo DESC;', (err, result) => {
+    client.query('SELECT g.name game_name, p.name player_name, num_wins, num_losses, num_draws, elo FROM player_stat ps INNER JOIN game g ON ps.game_id=g.game_id INNER JOIN player p ON ps.player_id=p.player_id ORDER BY game DESC, elo DESC;', (err, result) => {
       if (err)
           next(err)
       else{
@@ -15,7 +15,7 @@ boardgames.get('/',(req, res, next) => {
         let games_stats = []
         result.rows.forEach(row => {
           let player_stat = {
-            player: row.player,
+            player: row.player_name,
             elo: row.elo,
             num_wins: row.num_wins,
             num_losses: row.num_losses,
@@ -24,11 +24,11 @@ boardgames.get('/',(req, res, next) => {
             plusminus: row.num_wins - row.num_losses
           }
           
-          let game_stats = games_stats.find(gs => gs.game == row.game)
+          let game_stats = games_stats.find(gs => gs.game_name == row.game_name)
           
           if (!game_stats){
             games_stats.push({
-              game: row.game,
+              game_name: row.game_name,
               stats: [player_stat]
             })
           } else{
