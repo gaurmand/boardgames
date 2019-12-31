@@ -83,7 +83,7 @@ boardgames.post('/games/new',(req, res) => {
           }
         })
       }
-    }
+    })
   })
 
 })
