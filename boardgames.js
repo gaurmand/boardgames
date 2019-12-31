@@ -7,7 +7,7 @@ const client = new Client()
 client.connect()
 
 boardgames.get('/',(req, res, next) => {
-    client.query('SELECT g.name game_name, p.name player_name, num_wins, num_losses, num_draws, elo FROM player_stat ps INNER JOIN game g ON ps.game_id=g.game_id INNER JOIN player p ON ps.player_id=p.player_id ORDER BY game DESC, elo DESC;', (err, result) => {
+    client.query('SELECT g.name game_name, p.name player_name, num_wins, num_losses, num_draws, elo FROM player_stat ps INNER JOIN game g ON ps.game_id=g.game_id INNER JOIN player p ON ps.player_id=p.player_id ORDER BY game_name DESC, elo DESC;', (err, result) => {
       if (err)
           next(err)
       else{
