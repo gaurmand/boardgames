@@ -185,8 +185,9 @@ async function insertGameRecord(res, game){
     res.send('Error on player select')    
   }
   
-  if (players.length <= 0 ) return //no need to update player_stat records
-  
+  if (players.length <= 0 ) //no need to update player_stat records
+    res.redirect('/')
+
   //insert player_stat records
   try{
     //construct query text
