@@ -17,7 +17,7 @@ html
             a.item(href="/games/new") New Game
         each game_stats in games_stats
           .ui.vertical.segment
-            h2.ui.header= game_stats.game
+            h2.ui.header= game_stats.game_name
             table.ui.celled.striped.large.table
               thead
                 tr
@@ -31,7 +31,7 @@ html
               tbody
                 each player_stat in game_stats.stats
                   tr
-                    td=player_stat.player
+                    td=player_stat.player_name
                     td=player_stat.elo
                     td=player_stat.num_wins
                     td=player_stat.num_losses

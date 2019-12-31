@@ -15,7 +15,7 @@ boardgames.get('/',(req, res, next) => {
         let games_stats = []
         result.rows.forEach(row => {
           let player_stat = {
-            player: row.player_name,
+            player_name: row.player_name,
             elo: row.elo,
             num_wins: row.num_wins,
             num_losses: row.num_losses,
