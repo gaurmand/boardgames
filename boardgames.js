@@ -163,12 +163,46 @@ function getWinPercentage(wins, losses, draws){
 }
 
 async function insertGameRecord(res, game){
+  let result, game_id, players;
+  
+  //insert game record
   try{
-    let result = await client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [game.name, game.desc])
-    console.log(result.rows[0])
-    res.redirect('/')
+    result = await client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [game.name, game.desc])
+    game_id = result.rows[0].game_id
+    console.log('game_id: ' + game_id)
   } catch(err){
-    console.error(err)  
+    console.error(err)
+    res.send('Error on game insert')    
+  }
+  
+  //get all player records
+  try{
+    result = await client.query('SELECT * FROM player;')
+    players = result.rows
+    console.log(players)
+  } catch(err){
+    console.error(err)
+    res.send('Error on player select')    
+  }
+  
+  if (player.rows.length <= 0 ) return //no need to update player_stat records
+  
+  //insert player_stat records
+  try{
+    //construct query text
+    let query_text = 'INSERT INTO player_stat(game_id, player_id, num_wins, num_losses, num_draws, elo) VALUES'
+    players.forEach((player, i) => {query_text+=`($1,$${i+2},0,0,0,1000)` + (i==players.length-1 ? ';':',')})
+    console.log('query text: '+query_text)
+    
+    //construct values array
+    let values = [game_id]
+    players.forEach(player => values.push(player.player_id))
+    console.log('values: ', values)
+    
+    await client.query(query_text,values)
+  } catch(err){
+    console.error(err)
+    res.send('Error on player_stat insert')    
   }
   
 }
