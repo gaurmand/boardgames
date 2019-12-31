@@ -171,7 +171,8 @@ async function insertGameRecord(res, game){
     console.log('game_id: ' + game_id)
   } catch(err){
     console.error(err)
-    res.send('Error on game insert')    
+    res.send('Error on game insert')
+    return
   }
   
   //get all player records
@@ -181,7 +182,8 @@ async function insertGameRecord(res, game){
     console.log(players)
   } catch(err){
     console.error(err)
-    res.send('Error on player select')    
+    res.send('Error on player select')   
+    return
   }
   
   if (players.length <= 0 ){ //no need to update player_stat records
@@ -204,7 +206,8 @@ async function insertGameRecord(res, game){
     await client.query(query_text,values)
   } catch(err){
     console.error(err)
-    res.send('Error on player_stat insert')    
+    res.send('Error on player_stat insert')   
+    return
   }
   
   res.redirect('/')
@@ -221,6 +224,7 @@ async function insertPlayerRecord(res, player){
   } catch(err){
     console.error(err)
     res.send('Error on player insert')    
+    return
   }
   
   //get all game records
@@ -230,7 +234,8 @@ async function insertPlayerRecord(res, player){
     console.log(games)
   } catch(err){
     console.error(err)
-    res.send('Error on game select')    
+    res.send('Error on game select')   
+    return    
   }
   
   if (games.length <= 0 ){ //no need to update player_stat records
@@ -254,6 +259,7 @@ async function insertPlayerRecord(res, player){
   } catch(err){
     console.error(err)
     res.send('Error on player_stat insert')    
+    return
   }
   
   res.redirect('/')
