@@ -370,7 +370,8 @@ function getNewElo(old_elo, other_elos, result){
   }
   
   let elo_change = elo_k*(result_val-prob_winning)
-  return old_elo + elo_change
+  let new_elo = old_elo + elo_change
+  return Math.round(100*new_elo)/100
 }
 
 module.exports = boardgames
