@@ -1,6 +1,8 @@
 const express = require('express')
 const boardgames = express.Router()
 
+const elo_k = 32;
+
 //connect to db
 const { Client } = require('pg')
 const client = new Client()
@@ -51,9 +53,9 @@ boardgames.get('/matches/new',(req, res) => {
 
 boardgames.post('/matches/new',(req, res) => {
   console.log(req.body)
-  let match = {match_date: new Date(), game_id: req.body.game_id}
-  let match_results = [{},{},{},{}]
+  let match = {date: new Date(), game_id: req.body.game_id}
   
+  let match_results = [{},{},{},{}]
   for (let [key, value] of Object.entries(req.body)) {
     let res = /player_id([0-9])/.exec(key)
     if(res){
@@ -74,7 +76,9 @@ boardgames.post('/matches/new',(req, res) => {
   
   match_results = match_results.filter(mr => mr.player_id && mr.result)
   console.log(match_results)
-  //nsertMatchRecord(res)
+  
+  if (match_results.length > 0)
+    insertMatchRecord(res, match, match_results)
 })
 
 boardgames.get('/players/new',(req, res) => {
@@ -226,7 +230,62 @@ async function renderNewMatchForm(res){
   res.render('new_match', { title: "New Match", message: "Create a new match record", games: games, players: players})
 }
 
-async function insertMatchRecord(res){
+async function insertMatchRecord(res, match, match_results){
+  let result, match_id, player_stats
+  
+  if (await beginTransaction(res))
+    return
+
+  //insert match record
+  try{
+    result = await client.query('INSERT INTO match(date, game_id) VALUES($1, $2) RETURNING match_id', [match.date, match.game_id])
+    match_id = result.rows[0].match_id
+    console.log('match_id: ' + match_id)
+  } catch(err){
+    console.error(err)
+    rollbackTransaction()
+    res.send('Error on match insert')
+    return
+  }
+  
+  //get player_stat records
+  try{
+    let player_ids = []
+    match_results.forEach(mr => player_ids.push(mr.player_id))
+    
+    let query_player_ids = '('+player_ids.toString()+')'
+    console.log('query_player_ids: '+ query_player_ids)
+    
+    result = await client.query('SELECT player_id, elo FROM player_stat WHERE game_id=$1 AND player_id IN $2;', [match.game_id, query_player_ids])
+    player_stats = result.rows
+    console.log('player_stats: ' + player_stats)
+  } catch(err){
+    console.error(err)
+    rollbackTransaction()
+    res.send('Error on player_stat select')
+    return
+  }
+  
+  //set pre_elo fields
+  match_results.forEach(mr => {
+    let player_stat = player_stats.find(ps => ps.player_id == mr.player_id)
+    mr.pre_elo = player_stat.elo
+  })
+  
+  //calculate post_elo fields
+  match_results.forEach(mr => {
+    let other_elos = []
+    match_results.forEach(mr2 => {
+      if (mr2.player_id != mr.player_id)
+        other_elos.push(mr2.pre_elo)
+    })
+    mr.post_elo = getNewElo(mr.pre_elo, other_elos, mr.result)
+  })
+  
+  console.log(match_results)
+  
+  commitTransaction()
+  res.redirect('/')
 }
 
 async function selectAll(table){
@@ -262,6 +321,32 @@ function commitTransaction(){
     if (err)
       console.error(err)
   })
+}
+
+function getNewElo(old_elo, other_elos, result){
+  let avg_comp_elo = 0
+  other_elos.forEach(oelo => avg_comp_elo+=oelo)
+  avg_comp_elo/=avg_comp_elo/length
+  
+  let prob_winning = 1/(1+Math.pow(10,((avg_comp_elo-old_elo)/400)))
+  
+  let result_val;
+  switch (result){
+    case 'win': 
+      result_val = 1
+      break
+    case 'loss': 
+      result_val = 0
+      break
+    case 'draw': 
+      result_val = 0.5
+      break
+    default:
+      throw 'unknown match result'
+  }
+  
+  let elo_change = elo_k*(result_val-prob_winning)
+  return old_elo + elo_change
 }
 
 module.exports = boardgames
