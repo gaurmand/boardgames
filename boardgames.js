@@ -22,7 +22,7 @@ boardgames.get('/',(req, res, next) => {
         result.rows.forEach(row => {
           let player_stat = {
             player_name: row.player_name,
-            elo: row.elo,
+            elo: Math.round(row.elo),
             num_wins: row.num_wins,
             num_losses: row.num_losses,
             num_draws: row.num_draws,
@@ -397,8 +397,7 @@ function getNewElo(old_elo, other_elos, result){
   }
   
   let elo_change = elo_k*(result_val-prob_winning)
-  let new_elo = old_elo + elo_change
-  return Math.round(100*new_elo)/100
+  return old_elo + elo_change
 }
 
 module.exports = boardgames
