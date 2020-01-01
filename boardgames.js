@@ -47,6 +47,14 @@ boardgames.get('/',(req, res, next) => {
     })  
 })
 
+boardgames.get('/reset',(req, res) => {
+  client.query('DELETE FROM player;', (err, result) => {
+    client.query('DELETE FROM game;', (err, result) => {
+      res.redirect('/')
+    })
+  })
+})
+
 boardgames.get('/matches/new',(req, res) => {
   renderNewMatchForm(res)
 })
