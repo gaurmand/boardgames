@@ -171,6 +171,7 @@ async function insertGameRecord(res, game){
     console.log('game_id: ' + game_id)
   } catch(err){
     console.error(err)
+    rollbackTransaction()
     res.send('Error on game insert')
     return
   }
@@ -182,11 +183,13 @@ async function insertGameRecord(res, game){
     console.log(players)
   } catch(err){
     console.error(err)
+    rollbackTransaction()
     res.send('Error on player select')   
     return
   }
   
   if (players.length <= 0 ){ //no need to update player_stat records
+    commitTransaction()
     res.redirect('/')
     return
   }
@@ -206,15 +209,20 @@ async function insertGameRecord(res, game){
     await client.query(query_text,values)
   } catch(err){
     console.error(err)
+    rollbackTransaction()
     res.send('Error on player_stat insert')   
     return
   }
   
+  commitTransaction()
   res.redirect('/')
 }
 
 async function insertPlayerRecord(res, player){
   let result, player_id, games;
+  
+  if (await beginTransaction())
+    return
   
   //insert player record
   try{
@@ -223,7 +231,8 @@ async function insertPlayerRecord(res, player){
     console.log('player_id: ' + player_id)
   } catch(err){
     console.error(err)
-    res.send('Error on player insert')    
+    rollbackTransaction()
+    res.send('Error on player insert')
     return
   }
   
@@ -234,11 +243,13 @@ async function insertPlayerRecord(res, player){
     console.log(games)
   } catch(err){
     console.error(err)
+    rollbackTransaction()
     res.send('Error on game select')   
     return    
   }
   
   if (games.length <= 0 ){ //no need to update player_stat records
+    commitTransaction()
     res.redirect('/')
     return
   }
@@ -258,37 +269,36 @@ async function insertPlayerRecord(res, player){
     await client.query(query_text,values)
   } catch(err){
     console.error(err)
+    rollbackTransaction()
     res.send('Error on player_stat insert')    
     return
   }
   
+  commitTransaction()
   res.redirect('/')
 }
 
-function beginTransaction(next){
-  client.query('BEGIN', err => {
-    if (err)
-      console.error(err)
-    else
-      next()
-  })
+async function beginTransaction(res){
+  try{
+    await client.query('BEGIN')
+  } catch (err){
+    console.error(err)
+    res.send('Error on begin transaction')
+    return true    
+  }
 }
 
-function rollbackTransaction(next){
+function rollbackTransaction(){
   client.query('ROLLBACK', err => {
     if (err)
       console.error(err)
-    else if (next)
-      next()
   })
 }
 
-function commitTransaction(next){
+function commitTransaction(){
   client.query('COMMIT', err => {
     if (err)
       console.error(err)
-    else if (next)
-      next()
   })
 }
 
