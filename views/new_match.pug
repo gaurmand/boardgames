@@ -17,16 +17,16 @@ html
             each game in games
               option(value=game.game_id)=game.name
         each i in [1,2,3,4]
-          .fields
+          .fields.match_result
             .field
               label Player
-              select(name="player_id"+i required)
+              select(name="player_id"+i)
                 option(value="") Choose a player
                 each player in players
                   option(value=player.player_id)=player.name
             .field
               label Result
-              select(name="result"+i required)
+              select(name="result"+i)
                 option(value="") Choose a match result
                 option(value="win") Win
                 option(value="loss") Loss
