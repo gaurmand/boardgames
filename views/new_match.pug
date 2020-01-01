@@ -12,21 +12,23 @@ html
       form.ui.form(action="/matches/new" method="post")
         .field
           label Game type
-          select(name="game_id")
+          select(name="game_id" required)
+            option(value="") Choose a game type
             each game in games
               option(value=game.game_id)=game.name
         each i in [1,2,3,4]
           .fields
             .field
               label Player
-              select(name="player_id"+i)
+              select(name="player_id"+i required)
+                option(value="") Choose a player
                 each player in players
                   option(value=player.player_id)=player.name
             .field
               label Result
-              select(name="result"+i)
+              select(name="result"+i required)
+                option(value="") Choose a match result
                 option(value="win") Win
-                option(value="") Loss
-              
-          
+                option(value="loss") Loss
+                option(value="draw") Draw
         button.ui.button(type="submit") Submit
