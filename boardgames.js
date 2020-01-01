@@ -78,6 +78,9 @@ function getWinPercentage(wins, losses, draws){
 async function insertGameRecord(res, game){
   let result, game_id, players;
   
+  if (await beginTransaction(res))
+    return
+  
   //insert game record
   try{
     result = await client.query('INSERT INTO game(name, description) VALUES($1, $2) RETURNING game_id', [game.name, game.desc])
@@ -135,7 +138,7 @@ async function insertGameRecord(res, game){
 async function insertPlayerRecord(res, player){
   let result, player_id, games;
   
-  if (await beginTransaction())
+  if (await beginTransaction(res))
     return
   
   //insert player record
