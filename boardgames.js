@@ -51,7 +51,31 @@ boardgames.get('/matches/new',(req, res) => {
 
 boardgames.post('/matches/new',(req, res) => {
   console.log(req.body)
-  res.redirect('/')
+  let match = {match_date: new Date(), game_id: req.body.game_id}
+  let match_results = [{},{},{},{}]
+  
+  for (let [key, value] of Object.entries(req.body)) {
+    let res = /player([0-9])/.exec(key)
+    if(res){
+      let index = parseInt(res[1])
+      match_results[index].player_id = value
+      continue
+    }
+    
+    res = /result([0-9])/.exec(key)
+    if(res){
+      let index = parseInt(res[1])
+      match_results[index].result = value
+      continue
+    }
+  }
+  
+  console.log(match)
+  console.log(match_results)
+  
+  match_results.filter(mr => mr.player_id && mr.result)
+  console.log(match_results)
+  //nsertMatchRecord(res)
 })
 
 boardgames.get('/players/new',(req, res) => {
@@ -201,6 +225,9 @@ async function renderNewMatchForm(res){
   }
   
   res.render('new_match', { title: "New Match", message: "Create a new match record", games: games, players: players})
+}
+
+async function insertMatchRecord(res){
 }
 
 async function selectAll(table){
