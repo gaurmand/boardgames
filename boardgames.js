@@ -1,7 +1,7 @@
 const express = require('express')
 const boardgames = express.Router()
 
-const elo_k = 32;
+const elo_k = 40;
 
 //connect to db
 const { Client } = require('pg')
@@ -377,7 +377,7 @@ function commitTransaction(){
 function getNewElo(old_elo, other_elos, result){
   let avg_comp_elo = 0
   other_elos.forEach(oelo => avg_comp_elo+=oelo)
-  avg_comp_elo/=avg_comp_elo/other_elos.length
+  avg_comp_elo=avg_comp_elo/other_elos.length
   
   let prob_winning = 1/(1+Math.pow(10,((avg_comp_elo-old_elo)/400)))
   
