@@ -76,7 +76,7 @@ function getWinPercentage(wins, losses, draws){
 }
 
 async function insertGameRecord(res, game){
-  let result, game_id, players;
+  let result, game_id;
   
   if (await beginTransaction(res))
     return
