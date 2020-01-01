@@ -293,7 +293,7 @@ async function insertMatchRecord(res, match, match_results){
     let values = [match_id]
     match_results.forEach((mr, i) => {
       query_text+=`($1,$${4*i+2},$${4*i+3},$${4*i+4},$${4*i+5})` + (i==match_results.length-1 ? ';':',')
-      values.concat([mr.player_id, mr.result, mr.pre_elo, mr.post_elo])
+      values = values.concat([mr.player_id, mr.result, mr.pre_elo, mr.post_elo])
     })
     console.log('query text: '+query_text)
     console.log('values: '+values)
