@@ -307,6 +307,16 @@ async function insertMatchRecord(res, match, match_results){
   }
   
   //update player_stat records
+  try{
+    match_results.forEach(mr => {
+      await client.query('UPDATE player_stat SET elo=$1 WHERE game_id=$2 AND player_id=$3', [mr.post_elo, match.game_id, mr.player_id])
+    })
+  } catch(err){
+    console.error(err)
+    rollbackTransaction()
+    res.send('Error on player_stat update')    
+    return
+  }
   
   commitTransaction()
   res.redirect('/')
