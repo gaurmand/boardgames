@@ -258,7 +258,7 @@ async function insertMatchRecord(res, match, match_results){
     
     result = await client.query(`SELECT player_id, elo FROM player_stat WHERE game_id=$1 AND player_id IN ${query_player_ids};`, [match.game_id])
     player_stats = result.rows
-    console.log('player_stats: ' + player_stats)
+    console.log( player_stats)
   } catch(err){
     console.error(err)
     rollbackTransaction()
@@ -328,7 +328,7 @@ function commitTransaction(){
 function getNewElo(old_elo, other_elos, result){
   let avg_comp_elo = 0
   other_elos.forEach(oelo => avg_comp_elo+=oelo)
-  avg_comp_elo/=avg_comp_elo/length
+  avg_comp_elo/=avg_comp_elo/other_elos.length
   
   let prob_winning = 1/(1+Math.pow(10,((avg_comp_elo-old_elo)/400)))
   
