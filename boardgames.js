@@ -256,7 +256,7 @@ async function insertMatchRecord(res, match, match_results){
     let query_player_ids = '('+player_ids.toString()+')'
     console.log('query_player_ids: '+ query_player_ids)
     
-    result = await client.query(`SELECT player_id, elo FROM player_stat WHERE game_id=$1 AND player_id IN ${query_player_ids};`, [match.game_id])
+    result = await client.query(`SELECT * FROM player_stat WHERE game_id=$1 AND player_id IN ${query_player_ids};`, [match.game_id])
     player_stats = result.rows
     console.log( player_stats)
   } catch(err){
