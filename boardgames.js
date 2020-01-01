@@ -55,7 +55,7 @@ boardgames.post('/matches/new',(req, res) => {
   let match_results = [{},{},{},{}]
   
   for (let [key, value] of Object.entries(req.body)) {
-    let res = /player([0-9])/.exec(key)
+    let res = /player_id([0-9])/.exec(key)
     if(res){
       let index = parseInt(res[1])
       match_results[index].player_id = value
@@ -66,7 +66,6 @@ boardgames.post('/matches/new',(req, res) => {
     if(res){
       let index = parseInt(res[1])
       match_results[index].result = value
-      continue
     }
   }
   
