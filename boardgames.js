@@ -55,7 +55,7 @@ boardgames.post('/matches/new',(req, res) => {
 })
 
 boardgames.get('/players/new',(req, res) => {
-  res.render('new_player', { title: "New Player", message: "Create a new player record"})
+  res.render('new_player', { title: "New Player", message: "Create a new player record", games: [{game_id: 1, name: "Azul"}, {game_id: 2, name: "Catan"}], players: [{player_id: 1, name: "Jay"},{player_id: 2, name: "Mike"}]})
 })
 boardgames.post('/players/new',(req, res) => {
   console.log(req.body)
