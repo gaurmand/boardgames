@@ -94,14 +94,10 @@ async function insertGameRecord(res, game){
   }
   
   //get all player records
-  try{
-    result = await client.query('SELECT * FROM player;')
-    players = result.rows
-    console.log(players)
-  } catch(err){
-    console.error(err)
+  let players = await selectAll('player')
+  if(!players){
     rollbackTransaction()
-    res.send('Error on player select')   
+    res.send('Error on player select')
     return
   }
   
@@ -136,7 +132,7 @@ async function insertGameRecord(res, game){
 }
 
 async function insertPlayerRecord(res, player){
-  let result, player_id, games;
+  let result, player_id;
   
   if (await beginTransaction(res))
     return
@@ -154,15 +150,11 @@ async function insertPlayerRecord(res, player){
   }
   
   //get all game records
-  try{
-    result = await client.query('SELECT * FROM game;')
-    games = result.rows
-    console.log(games)
-  } catch(err){
-    console.error(err)
+  let games = await selectAll('game')
+  if(!games){
     rollbackTransaction()
-    res.send('Error on game select')   
-    return    
+    res.send('Error on game select')
+    return
   }
   
   if (games.length <= 0 ){ //no need to update player_stat records
@@ -197,14 +189,12 @@ async function insertPlayerRecord(res, player){
 
 async function renderNewMatchForm(res){
   let games = await selectAll('game')
-  
   if(!games){
     res.send('Error on game select')
     return
   }
   
   let players = await selectAll('player')
-  
   if(!players){
     res.send('Error on player select')
     return
