@@ -309,8 +309,23 @@ async function insertMatchRecord(res, match, match_results){
   //update player_stat records
   try{
     for (let i=0; i<match_results.length; i++){
-      let values = [match_results[i].post_elo, match.game_id, match_results[i].player_id]
-      await client.query('UPDATE player_stat SET elo=$1 WHERE game_id=$2 AND player_id=$3', values)
+      let player_stat = player_stats.find(ps => ps.player_id == match_results[i].player_id)
+      switch (match_results[i].result){
+        case 'win': 
+          player_stat.num_wins++
+          break
+        case 'loss': 
+          player_stat.num_losses++
+          break
+        case 'draw': 
+          player_stat.num_draws++
+          break
+        default:
+          throw 'unknown match result'
+      }
+      
+      let values = [match_results[i].post_elo, player_stat.num_wins, player_stat.num_losses, player_stat.num_draws, match.game_id, match_results[i].player_id]
+      await client.query('UPDATE player_stat SET elo=$1, num_wins=$2, num_losses=$3, num_draws=$4 WHERE game_id=$5 AND player_id=$6', values)
     }
   } catch(err){
     console.error(err)
