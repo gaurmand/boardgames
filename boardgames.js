@@ -308,7 +308,7 @@ async function insertMatchRecord(res, match, match_results){
   
   //update player_stat records
   try{
-    for (leti=0; i<match_results.length; i++){
+    for (let i=0; i<match_results.length; i++){
       let values = [match_results[i].post_elo, match.game_id, [i].player_id]
       await client.query('UPDATE player_stat SET elo=$1 WHERE game_id=$2 AND player_id=$3', values)
     }
