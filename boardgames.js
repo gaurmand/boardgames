@@ -286,6 +286,28 @@ async function insertMatchRecord(res, match, match_results){
   
   console.log(match_results)
   
+  //insert match_result records
+  try{
+    //construct query text
+    let query_text = 'INSERT INTO match_result(match_id, player_id, result, pre_elo, post_elo) VALUES'
+    let values = [match_id]
+    match_results.forEach((mr, i) => {
+      query_text+=`($1,$${4*i+2},$${4*i+3},$${4*i+4},$${4*i+5})` + (i==match_results.length-1 ? ';':',')
+      values.concat([mr.player_id, mr.result, mr.pre_elo, mr.post_elo])
+    })
+    console.log('query text: '+query_text)
+    console.log('values: '+values)
+    
+    await client.query(query_text, values)
+  } catch(err){
+    console.error(err)
+    rollbackTransaction()
+    res.send('Error on match_result insert')    
+    return
+  }
+  
+  //update player_stat records
+  
   commitTransaction()
   res.redirect('/')
 }
