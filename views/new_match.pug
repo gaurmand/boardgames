@@ -1,0 +1,32 @@
+html
+  head
+    title= title
+    link(rel="stylesheet" type="text/css" href="/static/semantic.min.css")
+    link(rel="stylesheet" type="text/css" href="/static/test.css")
+    script(src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous")
+    script(src="/static/semantic.min.js")
+  body
+    .main.ui.container
+      .ui.vertical.segment
+        h1.ui.header=message
+      form.ui.form(action="/matches/new" method="post")
+        .field
+          label Game type
+          select(name=game_id)
+            each game in games
+              option(value=game.game_id)=game.name
+        each i in [1,2,3,4]
+          .fields
+            .field
+              label Player
+              select(name=player_id)
+                each player in players
+                  option(value=player.player_id)=player.name
+            .field
+              label Result
+              select(name=result)
+                option(value="win") Win
+                option(value="") Loss
+              
+          
+        button.ui.button(type="submit") Submit
