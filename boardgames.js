@@ -325,6 +325,7 @@ async function insertMatchRecord(res, match, match_results){
       }
       
       let values = [match_results[i].post_elo, player_stat.num_wins, player_stat.num_losses, player_stat.num_draws, match.game_id, match_results[i].player_id]
+      console.log('values: '+values)
       await client.query('UPDATE player_stat SET elo=$1, num_wins=$2, num_losses=$3, num_draws=$4 WHERE game_id=$5 AND player_id=$6', values)
     }
   } catch(err){
