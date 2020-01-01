@@ -46,7 +46,7 @@ boardgames.get('/',(req, res, next) => {
 })
 
 boardgames.get('/matches/new',(req, res) => {
-  res.render('new_match', { title: "New Match", message: "Create a new match record", games: [{game_id: 1, name: "Azul"}, {game_id: 2, name: "Catan"}], players: [{player_id: 1, name: "Jay"},{player_id: 2, name: "Mike"}]})
+  renderNewMatchForm(res)
 })
 
 boardgames.post('/matches/new',(req, res) => {
@@ -193,6 +193,35 @@ async function insertPlayerRecord(res, player){
   
   commitTransaction()
   res.redirect('/')
+}
+
+async function renderNewMatchForm(res){
+  let games = await selectAll('game')
+  
+  if(!games){
+    res.send('Error on game select')
+    return
+  }
+  
+  let players = await selectAll('player')
+  
+  if(!players){
+    res.send('Error on player select')
+    return
+  }
+  
+  res.render('new_match', { title: "New Match", message: "Create a new match record", games: games, players: players})
+}
+
+async function selectAll(table){
+  let result, players
+  try{
+    result = await client.query(`SELECT * FROM ${table};`)
+    return result.rows
+  } catch(err){
+    console.error(err)
+    return null
+  }
 }
 
 async function beginTransaction(res){
