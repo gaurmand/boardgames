@@ -72,7 +72,7 @@ boardgames.post('/matches/new',(req, res) => {
   console.log(match)
   console.log(match_results)
   
-  match_results.filter(mr => mr.player_id && mr.result)
+  match_results = match_results.filter(mr => mr.player_id && mr.result)
   console.log(match_results)
   //nsertMatchRecord(res)
 })
