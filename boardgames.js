@@ -389,22 +389,25 @@ function getNewElo(old_elo, other_elos, result){
   
   let prob_winning = 1/(1+Math.pow(10,((avg_comp_elo-old_elo)/400)))
   
-  let result_val;
+  let result_val, elo_change;
   switch (result){
     case 'win': 
       result_val = 1
+      elo_change = elo_k*(result_val-prob_winning)
       break
     case 'loss': 
       result_val = 0
+      elo_change = elo_k*(result_val-prob_winning)/(other_elos.length)
       break
     case 'draw': 
       result_val = 0.5
+      elo_change = 0
       break
     default:
       throw 'unknown match result'
   }
   
-  let elo_change = elo_k*(result_val-prob_winning)
+  
   return old_elo + elo_change
 }
 
