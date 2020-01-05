@@ -105,9 +105,57 @@ boardgames.post('/games/new',(req, res) => {
   insertGameRecord(res, {name: req.body.name, desc: req.body.desc})
 })
 
+boardgames.get('/api/get',(req, res) => {
+  console.log(req.query)
+  let table = req.query.type
+  switch (table){
+    case player_stat:
+      break
+    default:
+      console.log('Unsupported query type')
+      res.json([])
+  }
+  client.query(`SELECT * FROM ${table};`, (err, result) => {
+    if (err){
+      console.error(err)
+      res.json([])
+    } else {
+      res.json(getPlayerStats(result.rows))
+    }
+  })
+  
+})
+
 function getWinPercentage(wins, losses, draws){
   let num_games = wins + losses + draws
   return num_games ? (100*wins/num_games).toFixed(2)+'%' : "0%"
+}
+
+function getPlayerStats(rows){
+  let games_stats = []
+  rows.forEach(row => {
+    let player_stat = {
+      player_name: row.player_name,
+      elo: Math.round(row.elo),
+      num_wins: row.num_wins,
+      num_losses: row.num_losses,
+      num_draws: row.num_draws,
+      win_percentage: getWinPercentage(row.num_wins, row.num_losses, row.num_draws),
+      plusminus: row.num_wins - row.num_losses
+    }
+    
+    let game_stats = games_stats.find(gs => gs.game_name == row.game_name)
+    
+    if (!game_stats){
+      games_stats.push({
+        game_name: row.game_name,
+        stats: [player_stat]
+      })
+    } else{
+      game_stats.stats.push(player_stat)
+    }
+  })
+  return games_stats
 }
 
 async function insertGameRecord(res, game){
