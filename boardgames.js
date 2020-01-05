@@ -109,7 +109,7 @@ boardgames.get('/api/get',(req, res) => {
   console.log(req.query)
   let table = req.query.type
   switch (table){
-    case player_stat:
+    case "player_stat":
       break
     default:
       console.log('Unsupported query type')
