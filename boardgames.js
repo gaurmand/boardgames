@@ -107,6 +107,13 @@ boardgames.post('/games/new',(req, res) => {
 
 boardgames.get('/api/get',(req, res) => {
   console.log(req.query)
+  
+  //set CORS header
+  res.header(
+        "Access-Control-Allow-Origin",
+        "*"
+  );
+  
   let table = req.query.type
   switch (table){
     case "player_stat":
@@ -114,6 +121,7 @@ boardgames.get('/api/get',(req, res) => {
     default:
       console.log('Unsupported query type')
       res.json([])
+      return
   }
   
   let select_query = 'SELECT g.name game_name, p.name player_name, num_wins, num_losses, num_draws, elo '
