@@ -115,7 +115,12 @@ boardgames.get('/api/get',(req, res) => {
       console.log('Unsupported query type')
       res.json([])
   }
-  client.query(`SELECT * FROM ${table};`, (err, result) => {
+  
+  let select_query = 'SELECT g.name game_name, p.name player_name, num_wins, num_losses, num_draws, elo '
+  let join_query = 'FROM player_stat ps INNER JOIN game g ON ps.game_id=g.game_id INNER JOIN player p ON ps.player_id=p.player_id '
+  let order_query = 'ORDER BY game_name DESC, elo DESC;'
+    
+  client.query(select_query + join_query + order_query, (err, result) => {
     if (err){
       console.error(err)
       res.json([])
